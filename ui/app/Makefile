@@ -55,12 +55,10 @@ script.js: src/Data elm-env format $(ELM_FILES)
 src/Data: export TEMPOPENAPI := $(shell mktemp -d ./openapi-XXXXXXXXXX)
 src/Data: ../../api/v2/openapi.yaml
 	-rm -r src/Data
-	@(if [ "$(NO_DOCKER)" != "true" ] ; then \
-		$(DOCKER_RUN_CURRENT_USER) --rm -v ${PWD}/../..:/local openapitools/openapi-generator-cli:v3.3.4 generate \
-			-i /local/api/v2/openapi.yaml \
-		  -g elm \
-			-o /local/ui/app/$(TEMPOPENAPI) \
-	fi; )
+	$(DOCKER_CMD) --rm -v ${PWD}/../..:/local openapitools/openapi-generator-cli:v3.3.4 generate \
+		-i /local/api/v2/openapi.yaml \
+	  -g elm \
+		-o /local/ui/app/$(TEMPOPENAPI)
 	# We only want data directory & DateTime package.
 	cp -r $(TEMPOPENAPI)/src/Data src/Data
 	cp -r $(TEMPOPENAPI)/src/DateTime.elm src/DateTime.elm
